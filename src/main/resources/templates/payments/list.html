@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>가상계좌 데모</title><link rel="stylesheet" th:href="@{/style.css}"></head>
+<body><main>
+    <header><div><p class="eyebrow">PORTONE × TOSS PAYMENTS</p><h1>가상계좌 입금 테스트</h1><p class="muted">계좌를 발급하고, 입금 상태를 확인하세요.</p></div><a class="button" th:href="@{/payments/new}">가상계좌 발급</a></header>
+    <aside th:unless="${configured}" class="notice">연동 설정이 필요합니다. 프로젝트 루트의 <code>application-local.yaml</code>에 PortOne V2 API Secret, 상점 ID, 테스트 채널 키를 입력하고 서버를 재시작하세요.</aside>
+    <section class="card">
+        <h2>발급 내역 <span class="muted small">최근 50건</span></h2>
+        <p th:if="${#lists.isEmpty(payments)}" class="empty">아직 발급 내역이 없습니다. 첫 가상계좌를 발급해 보세요.</p>
+        <div class="table-wrap" th:unless="${#lists.isEmpty(payments)}"><table>
+            <thead><tr><th>주문 / 발급일시</th><th>구매자</th><th>금액</th><th>상태</th><th></th></tr></thead>
+            <tbody><tr th:each="p : ${payments}"><td><strong th:text="${p.orderName}"></strong><small th:text="${p.createdAtText}"></small></td><td th:text="${p.customerName}"></td><td class="nowrap" th:text="${#numbers.formatInteger(p.amount, 1, 'COMMA') + '원'}"></td><td><span class="badge" th:classappend="${p.status.name()}" th:text="${p.status.label}"></span></td><td><a th:href="@{/payments/{id}(id=${p.id})}">상세 보기 →</a></td></tr></tbody>
+        </table></div>
+    </section>
+    <footer>테스트 채널을 사용하세요. 테스트 입금은 토스페이먼츠 개발자센터의 테스트 결제내역에서 처리할 수 있습니다.</footer>
+</main></body></html>

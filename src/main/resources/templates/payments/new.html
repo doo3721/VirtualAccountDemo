@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>가상계좌 발급</title><link rel="stylesheet" th:href="@{/style.css}"></head>
+<body><main class="narrow">
+    <a class="back" th:href="@{/payments}">← 발급 내역</a>
+    <header><div><p class="eyebrow">NEW VIRTUAL ACCOUNT</p><h1>가상계좌 발급</h1><p class="muted">입력한 정보로 결제창 없이 계좌를 발급합니다.</p></div></header>
+    <aside th:unless="${configured}" class="notice">PortOne 연동 설정 후 발급할 수 있습니다. <code>application-local.yaml</code> 입력 후 서버를 재시작하세요.</aside>
+    <form class="card" method="post" th:action="@{/payments}" th:object="${form}">
+        <div class="error" th:if="${#fields.hasGlobalErrors()}"><p th:each="e : ${#fields.globalErrors()}" th:text="${e}"></p></div>
+        <input type="hidden" th:field="*{requestToken}">
+        <label for="orderName">주문명</label><input id="orderName" th:field="*{orderName}" required maxlength="100"><p class="field-error" th:errors="*{orderName}"></p>
+        <div class="grid"><div><label for="amount">결제 금액 (원)</label><input id="amount" type="number" th:field="*{amount}" min="100" max="1000000" required><p class="field-error" th:errors="*{amount}"></p></div>
+        <div><label for="bank">발급 은행</label><select id="bank" th:field="*{bank}"><option th:each="bank : ${banks}" th:value="${bank}" th:text="${bank.label}"></option></select><p class="field-error" th:errors="*{bank}"></p></div></div>
+        <label for="customerName">구매자 이름</label><input id="customerName" th:field="*{customerName}" autocomplete="name" placeholder="홍길동" maxlength="50" required><p class="field-error" th:errors="*{customerName}"></p>
+        <div class="grid"><div><label for="email">이메일</label><input id="email" type="email" th:field="*{email}" autocomplete="email" placeholder="test@example.com" maxlength="254" required><p class="field-error" th:errors="*{email}"></p></div>
+        <div><label for="phoneNumber">휴대폰 번호</label><input id="phoneNumber" type="tel" th:field="*{phoneNumber}" autocomplete="tel" placeholder="01012345678" maxlength="13" required><p class="field-error" th:errors="*{phoneNumber}"></p></div></div>
+        <label for="validHours">입금 기한 (발급 후 시간)</label><input id="validHours" type="number" th:field="*{validHours}" min="1" max="72" required><p class="field-error" th:errors="*{validHours}"></p>
+        <p class="muted small">일반(회전식) 가상계좌 · 원화 결제 · 현금영수증 신청 생략</p>
+        <button class="button full" type="submit" th:disabled="${!configured}">가상계좌 발급 요청</button>
+    </form>
+    <footer>계좌 발급은 입금 완료가 아닙니다. 발급 후 상세 화면에서 계좌와 입금 상태를 확인하세요.</footer>
+</main></body></html>

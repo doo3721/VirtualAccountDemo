@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>결제 상세</title><link rel="stylesheet" th:href="@{/style.css}"></head>
+<body><main class="narrow" th:object="${payment}">
+    <a class="back" th:href="@{/payments}">← 발급 내역</a>
+    <header><div><p class="eyebrow">PAYMENT DETAILS</p><h1 th:text="*{orderName}"></h1><span class="badge" th:classappend="*{status.name()}" th:text="*{status.label}"></span></div></header>
+    <div class="success" role="status" th:if="${message}" th:text="${message}"></div>
+    <div class="error" role="alert" th:if="${error}" th:text="${error}"></div>
+    <div class="notice" th:if="*{lastError != null}" th:text="*{lastError}"></div>
+    <section class="card account">
+        <p class="muted" th:text="*{bank.label}"></p>
+        <h2 class="account-number" th:text="*{accountNumber != null ? accountNumber : '계좌 정보 확인 필요'}"></h2>
+        <p class="amount" th:text="${#numbers.formatInteger(payment.amount, 1, 'COMMA') + '원'}"></p>
+        <dl><dt>예금주</dt><dd th:text="*{remitteeName != null ? remitteeName : '—'}"></dd><dt>입금 기한 (한국시간)</dt><dd th:text="*{expiresAtText}"></dd></dl>
+    </section>
+    <section class="card"><h2>결제 정보</h2><dl>
+        <dt>결제 ID</dt><dd class="mono" th:text="*{id}"></dd>
+        <dt>구매자</dt><dd th:text="*{customerName}"></dd>
+        <dt>이메일</dt><dd th:text="*{email}"></dd>
+        <dt>연락처</dt><dd th:text="*{phoneNumber}"></dd>
+        <dt>발급 요청</dt><dd th:text="*{createdAtText}"></dd>
+        <dt>입금 완료</dt><dd th:text="*{paidAtText}"></dd>
+        <dt>마지막 상태 조회</dt><dd th:text="*{syncedAtText}"></dd>
+        <dt>마지막 웹훅 반영</dt><dd th:text="*{lastWebhookAtText}"></dd>
+        <dt>웹훅 이벤트</dt><dd th:text="*{lastWebhookType != null ? lastWebhookType : '아직 반영된 웹훅 없음'}"></dd>
+    </dl><form method="post" th:action="@{/payments/{id}/sync(id=*{id})}"><button class="button full" type="submit">입금 상태 조회</button></form></section>
+    <aside class="notice"><strong>테스트 입금 및 알림 확인</strong><p>PortOne 콘솔의 해당 테스트 결제에서 테스트 입금 통지를 실행한 후, 위 버튼으로 상태를 조회하세요. 이 통지만으로 토스페이먼츠 웹훅 발송까지 검증되지는 않습니다.</p><p>입금 알림은 토스페이먼츠 → PortOne → 데모 서버 순서입니다. 이 앱의 수신 주소는 PortOne 콘솔의 V2 테스트 웹훅에 <code>https://공개주소/webhooks/portone</code>으로 등록하세요. localhost 주소는 외부에서 접근할 수 없습니다. 웹훅 수신 후 화면을 새로고침하면 갱신된 상태가 표시됩니다.</p><p>토스페이먼츠에서 시작하는 입금 이벤트는 토스페이먼츠 개발자센터의 해당 MID 테스트 결제내역에서 확인하세요. 테스트 계좌에는 실제 송금할 수 없습니다.</p></aside>
+    <footer>모든 일시는 한국시간(Asia/Seoul)입니다.</footer>
+</main></body></html>
